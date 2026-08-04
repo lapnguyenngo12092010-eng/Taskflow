@@ -12,4 +12,6 @@ public interface TaskService {
     TaskResponse getById(Long id);
     TaskResponse update(Long id, TaskRequest request);
     void delete(Long id);
+
+    List<TaskResponse> filterTasks(String status, String priority, Long projectId); // thêm nếu cần
 }

@@ -10,8 +10,7 @@ import vn.ctel.kids.taskflow.dto.TaskResponse;
 import vn.ctel.kids.taskflow.exception.ResourceNotFoundException;
 import vn.ctel.kids.taskflow.mapper.TaskConverter;
 import vn.ctel.kids.taskflow.repository.TaskMapper;
-import vn.ctel.kids.taskflow.service.TaskService;
-
+import java.util.Set;
 import java.util.List;
 
 @Service
@@ -21,6 +20,14 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskMapper taskMapper;
     private final TaskConverter taskConverter;
+
+    private static final Set<String> ALLOWED_SORT = Set.of("dueDate", "priority", "status", "createdAt");
+
+    public void validateSort(String sortBy) {
+        if (sortBy != null && !ALLOWED_SORT.contains(sortBy)) {
+            throw new IllegalArgumentException("Invalid sort field");
+        }
+    }
 
     @Override
     public TaskResponse create(TaskRequest request) {
@@ -56,6 +63,13 @@ public class TaskServiceImpl implements TaskService {
     public void delete(Long id) {
         findOrThrow(id);
         taskMapper.deleteById(id);
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<TaskResponse> filterTasks(String status, String priority, Long projectId) {
+        return taskMapper.filterTasks(status, priority, projectId).stream()
+                .map(taskConverter::toResponse)
+                .toList();
     }
 
     private Task findOrThrow(Long id) {

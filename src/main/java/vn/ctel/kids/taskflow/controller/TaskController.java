@@ -21,7 +21,9 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    /** POST /api/tasks — tạo mới. Trả 201 Created + header Location. */
+    /**
+     * POST /api/tasks — tạo mới. Trả 201 Created + header Location.
+     */
     @PostMapping
     public ResponseEntity<TaskResponse> create(@Valid @RequestBody TaskRequest request,
                                                UriComponentsBuilder uriBuilder) {
@@ -42,22 +44,40 @@ public class TaskController {
         return taskService.search(status, keyword);
     }
 
-    /** GET /api/tasks/{id} — lấy 1 task. Trả 404 nếu không có. */
+    /**
+     * GET /api/tasks/{id} — lấy 1 task. Trả 404 nếu không có.
+     */
     @GetMapping("/{id}")
     public TaskResponse getById(@PathVariable Long id) {
         return taskService.getById(id);
     }
 
-    /** PUT /api/tasks/{id} — cập nhật. Trả 404 nếu id không tồn tại. */
+    /**
+     * PUT /api/tasks/{id} — cập nhật. Trả 404 nếu id không tồn tại.
+     */
     @PutMapping("/{id}")
     public TaskResponse update(@PathVariable Long id, @Valid @RequestBody TaskRequest request) {
         return taskService.update(id, request);
     }
 
-    /** DELETE /api/tasks/{id} — xóa. Trả 204 No Content. */
+    /**
+     * DELETE /api/tasks/{id} — xóa. Trả 204 No Content.
+     */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         taskService.delete(id);
+    }
+
+    /**
+     * GET /api/tasks/filter — lọc theo nhiều tiêu chí: status, priority, projectId.
+     * Ví dụ: /api/tasks/filter?status=DONE&priority=HIGH&projectId=3
+     */
+    @GetMapping("/filter")
+    public List<TaskResponse> getTasks(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String priority,
+            @RequestParam(required = false) Long projectId) {
+        return taskService.filterTasks(status, priority, projectId);
     }
 }

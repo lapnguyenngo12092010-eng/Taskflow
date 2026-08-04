@@ -53,4 +53,19 @@
         WHERE id = #{id}
     </delete>
 
+    <select id="filterTasks" resultType="vn.ctel.kids.taskflow.domain.Task">
+        SELECT * FROM tasks
+        <where>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <if test="priority != null">
+                AND priority = #{priority}
+            </if>
+            <if test="projectId != null">
+                AND project_id = #{projectId}
+            </if>
+        </where>
+    </select>
+
 </mapper>

@@ -13,11 +13,16 @@ public interface TaskMapper {
 
     void insert(Task task);
 
-    List<Task> search(@Param("status") TaskStatus status, @Param("keyword") String keyword);
+    List<Task> search(@Param("status") TaskStatus status,
+                      @Param("keyword") String keyword);
 
     Optional<Task> findById(@Param("id") Long id);
 
-    int update(Task task);
+    void update(Task task);
 
-    int deleteById(@Param("id") Long id);
+    void deleteById(@Param("id") Long id);
+
+    List<Task> filterTasks(@Param("status") String status,
+                           @Param("priority") String priority,
+                           @Param("projectId") Long projectId);
 }
