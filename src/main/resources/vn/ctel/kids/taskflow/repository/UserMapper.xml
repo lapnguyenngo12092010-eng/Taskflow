@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.ctel.kids.taskflow.repository.UserMapper">
+
+    <insert id="insert" parameterType="vn.ctel.kids.taskflow.domain.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (name, email, created_at, updated_at)
+        VALUES (#{name}, #{email}, now(), now())
+    </insert>
+
+    <select id="findAll" resultType="vn.ctel.kids.taskflow.domain.User">
+        SELECT * FROM users
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultType="vn.ctel.kids.taskflow.domain.User">
+        SELECT * FROM users
+        WHERE id = #{id}
+    </select>
+
+    <update id="update" parameterType="vn.ctel.kids.taskflow.domain.User">
+        UPDATE users
+        SET name = #{name},
+        email = #{email},
+        updated_at = now()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM users
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -3,6 +3,7 @@ package vn.ctel.kids.taskflow.repository;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import vn.ctel.kids.taskflow.domain.Task;
+import vn.ctel.kids.taskflow.domain.TaskPriority;
 import vn.ctel.kids.taskflow.domain.TaskStatus;
 
 import java.util.List;
@@ -22,7 +23,13 @@ public interface TaskMapper {
 
     void deleteById(@Param("id") Long id);
 
-    List<Task> filterTasks(@Param("status") String status,
-                           @Param("priority") String priority,
+    List<Task> filterTasks(@Param("status") TaskStatus status,
+                           @Param("priority") TaskPriority priority,
                            @Param("projectId") Long projectId);
+
+    void updateStatus(@Param("id") Long id, @Param("status") TaskStatus status);
+
+    List<Task> findByCreatedBy(@Param("userId") Long userId);
+
+    List<Task> findByAssignedTo(@Param("userId") Long userId);
 }

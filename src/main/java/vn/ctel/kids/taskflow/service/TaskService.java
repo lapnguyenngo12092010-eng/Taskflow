@@ -1,5 +1,6 @@
 package vn.ctel.kids.taskflow.service;
 
+import vn.ctel.kids.taskflow.domain.TaskPriority;
 import vn.ctel.kids.taskflow.domain.TaskStatus;
 import vn.ctel.kids.taskflow.dto.TaskRequest;
 import vn.ctel.kids.taskflow.dto.TaskResponse;
@@ -13,5 +14,7 @@ public interface TaskService {
     TaskResponse update(Long id, TaskRequest request);
     void delete(Long id);
 
-    List<TaskResponse> filterTasks(String status, String priority, Long projectId); // thêm nếu cần
+    List<TaskResponse> filterTasks(TaskStatus status, TaskPriority priority, Long projectId);
+    TaskResponse updateStatus(Long id, TaskStatus status);
+    List<TaskResponse> getTasksByUser(Long userId, String role);
 }

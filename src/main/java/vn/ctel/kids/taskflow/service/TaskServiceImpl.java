@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.ctel.kids.taskflow.domain.Task;
+import vn.ctel.kids.taskflow.domain.TaskPriority;
 import vn.ctel.kids.taskflow.domain.TaskStatus;
 import vn.ctel.kids.taskflow.dto.TaskRequest;
 import vn.ctel.kids.taskflow.dto.TaskResponse;
@@ -12,6 +13,8 @@ import vn.ctel.kids.taskflow.mapper.TaskConverter;
 import vn.ctel.kids.taskflow.repository.TaskMapper;
 import java.util.Set;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -64,16 +67,44 @@ public class TaskServiceImpl implements TaskService {
         findOrThrow(id);
         taskMapper.deleteById(id);
     }
+
     @Override
     @Transactional(readOnly = true)
-    public List<TaskResponse> filterTasks(String status, String priority, Long projectId) {
+    public List<TaskResponse> filterTasks(TaskStatus status, TaskPriority priority, Long projectId) {
         return taskMapper.filterTasks(status, priority, projectId).stream()
                 .map(taskConverter::toResponse)
                 .toList();
+    }
+
+    @Override
+    public TaskResponse updateStatus(Long id, TaskStatus status) {
+        Task task = findOrThrow(id);
+        task.setStatus(status);
+        taskMapper.updateStatus(id, status);
+        return taskConverter.toResponse(task);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TaskResponse> getTasksByUser(Long userId, String role) {
+        List<Task> tasks;
+        if ("created".equalsIgnoreCase(role)) {
+            tasks = taskMapper.findByCreatedBy(userId);
+        } else if ("assigned".equalsIgnoreCase(role)) {
+            tasks = taskMapper.findByAssignedTo(userId);
+        } else {
+            List<Task> created = taskMapper.findByCreatedBy(userId);
+            List<Task> assigned = taskMapper.findByAssignedTo(userId);
+            tasks = Stream.concat(created.stream(), assigned.stream())
+                    .collect(Collectors.toMap(Task::getId, t -> t, (a, b) -> a))
+                    .values().stream().toList();
+        }
+        return tasks.stream().map(taskConverter::toResponse).toList();
     }
 
     private Task findOrThrow(Long id) {
         return taskMapper.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy Task với id: " + id));
     }
+
 }

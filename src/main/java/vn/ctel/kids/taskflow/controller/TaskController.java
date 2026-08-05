@@ -6,9 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import vn.ctel.kids.taskflow.domain.TaskPriority;
 import vn.ctel.kids.taskflow.domain.TaskStatus;
 import vn.ctel.kids.taskflow.dto.TaskRequest;
 import vn.ctel.kids.taskflow.dto.TaskResponse;
+import vn.ctel.kids.taskflow.dto.TaskStatusUpdateRequest;
 import vn.ctel.kids.taskflow.service.TaskService;
 
 import java.net.URI;
@@ -75,9 +77,18 @@ public class TaskController {
      */
     @GetMapping("/filter")
     public List<TaskResponse> getTasks(
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String priority,
+            @RequestParam(required = false) TaskStatus status,
+            @RequestParam(required = false) TaskPriority priority,
             @RequestParam(required = false) Long projectId) {
         return taskService.filterTasks(status, priority, projectId);
+    }
+
+    /**
+     * PATCH /api/tasks/{id}/status — đổi trạng thái task. Trả 404 nếu id không tồn tại.
+     */
+    @PatchMapping("/{id}/status")
+    public TaskResponse updateStatus(@PathVariable Long id,
+                                     @Valid @RequestBody TaskStatusUpdateRequest request) {
+        return taskService.updateStatus(id, request.getStatus());
     }
 }

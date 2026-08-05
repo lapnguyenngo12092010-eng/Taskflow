@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vn.ctel.kids.taskflow.repository.ProjectMapper">
+
+    <insert id="insert" parameterType="vn.ctel.kids.taskflow.domain.Project" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO project (name, description, status, start_date, end_date, created_at, updated_at)
+        VALUES (
+        #{name},
+        #{description},
+        #{status},
+        #{startDate},
+        #{endDate},
+        now(),
+        now()
+        )
+    </insert>
+
+    <select id="findAll" resultType="vn.ctel.kids.taskflow.domain.Project">
+        SELECT * FROM project
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findById" resultType="vn.ctel.kids.taskflow.domain.Project">
+        SELECT * FROM project
+        WHERE id = #{id}
+    </select>
+
+    <update id="update" parameterType="vn.ctel.kids.taskflow.domain.Project">
+        UPDATE project
+        SET name = #{name},
+        description = #{description},
+        status = #{status},
+        start_date = #{startDate},
+        end_date = #{endDate},
+        updated_at = now()
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM project
+        WHERE id = #{id}
+    </delete>
+
+    <select id="findTasksByProjectId" resultType="vn.ctel.kids.taskflow.domain.Task">
+        SELECT * FROM tasks
+        WHERE project_id = #{projectId}
+    </select>
+
+</mapper>

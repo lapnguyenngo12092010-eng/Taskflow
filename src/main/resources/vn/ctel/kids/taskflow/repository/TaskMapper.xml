@@ -5,13 +5,15 @@
 <mapper namespace="vn.ctel.kids.taskflow.repository.TaskMapper">
 
     <insert id="insert" parameterType="vn.ctel.kids.taskflow.domain.Task" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO tasks (title, description, status, priority, assignee, due_date, created_at, updated_at)
+        INSERT INTO tasks (title, description, status, priority, created_by, assigned_to, project_id, due_date, created_at, updated_at)
         VALUES (
         #{title},
         #{description},
         #{status},
         #{priority},
-        #{assignee},
+        #{createdBy},
+        #{assignedTo},
+        #{projectId},
         #{dueDate},
         now(),
         now()
@@ -42,7 +44,9 @@
         description = #{description},
         status = #{status},
         priority = #{priority},
-        assignee = #{assignee},
+        created_by = #{createdBy},
+        assigned_to = #{assignedTo},
+        project_id = #{projectId},
         due_date = #{dueDate},
         updated_at = now()
         WHERE id = #{id}
@@ -66,6 +70,20 @@
                 AND project_id = #{projectId}
             </if>
         </where>
+    </select>
+
+    <update id="updateStatus">
+        UPDATE tasks
+        SET status = #{status}, updated_at = now()
+        WHERE id = #{id}
+    </update>
+
+    <select id="findByCreatedBy" resultType="vn.ctel.kids.taskflow.domain.Task">
+        SELECT * FROM tasks WHERE created_by = #{userId}
+    </select>
+
+    <select id="findByAssignedTo" resultType="vn.ctel.kids.taskflow.domain.Task">
+        SELECT * FROM tasks WHERE assigned_to = #{userId}
     </select>
 
 </mapper>
